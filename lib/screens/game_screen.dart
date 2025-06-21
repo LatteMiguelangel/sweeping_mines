@@ -8,19 +8,19 @@ class GameScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("BuscandoMinasHD"),
-        titleSpacing: 10.0,
-        titleTextStyle: TextStyle(
-          color: Colors.redAccent,
-          backgroundColor: Colors.transparent,
-        ),
-        backgroundColor: Colors.black87,
-        shape: Border.all(
-          color: Colors.redAccent,
-          width: 2.0,
-          style: BorderStyle.solid),
+        backgroundColor: Color.fromARGB(255, 52, 223, 0),
       ),
       body: Container(
-
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.topCenter,
+            colors:[
+              Color.fromARGB(255, 156, 155, 155),
+              Color.fromARGB(225, 3, 3, 3),
+            ]
+          )
+        ),
       ),
     );
   }
