@@ -42,7 +42,9 @@ class GameScreen extends StatelessWidget {
                 ),
             ),
             Expanded(
+              //padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(3.0),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
@@ -51,20 +53,10 @@ class GameScreen extends StatelessWidget {
                 itemCount: 64,
                 // retornamos una celda de color negro para que se dibuje la cuadricula
                 itemBuilder: (context, index){
-                  return Container(
-                    margin: const EdgeInsets.all(2.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      border: Border.all(color: Colors.black54)
-                    ),
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Center(
-                        child: Text(
-                          index.toString(),
-                          style: Theme.of(context).textTheme.titleSmall,
-                        )
-                      ),
+                  return Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Container(
+                      color: Colors.black,
                     ),
                   );
                 },
