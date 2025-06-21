@@ -21,6 +21,27 @@ class GameScreen extends StatelessWidget {
             ]
           )
         ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: 
+                Row(
+                  children: [
+                    Text(
+                      "TIMER",
+                      style: Theme.of(context).primaryTextTheme.headlineLarge,
+                    ),
+                    Spacer(flex: 1),
+                    Text(
+                      "MINES",
+                      style: Theme.of(context).primaryTextTheme.headlineLarge,
+                    )
+                  ],
+                ),
+            ),
+          ],
+        ),
       ),
     );
   }
