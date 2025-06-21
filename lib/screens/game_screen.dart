@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/rendering.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
@@ -8,7 +9,7 @@ class GameScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("BuscandoMinasHD"),
-        backgroundColor: Color.fromARGB(255, 52, 223, 0),
+        backgroundColor: Color.fromARGB(255, 0, 0, 0),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -16,8 +17,8 @@ class GameScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.topCenter,
             colors:[
-              Color.fromARGB(255, 156, 155, 155),
-              Color.fromARGB(225, 3, 3, 3),
+              Color.fromARGB(255, 81, 81, 81),
+              Color.fromARGB(108, 3, 3, 3),
             ]
           )
         ),
@@ -29,17 +30,46 @@ class GameScreen extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "TIMER",
+                      "TIME",
                       style: Theme.of(context).primaryTextTheme.headlineLarge,
                     ),
-                    Spacer(flex: 1),
+                    Spacer(),
                     Text(
-                      "MINES",
+                      "FLAGS",
                       style: Theme.of(context).primaryTextTheme.headlineLarge,
                     )
                   ],
                 ),
             ),
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(3.0),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 8),
+                itemCount: 64,
+                // retornamos una celda de color negro para que se dibuje la cuadricula
+                itemBuilder: (context, index){
+                  return Container(
+                    margin: const EdgeInsets.all(2.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      border: Border.all(color: Colors.black54)
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Center(
+                        child: Text(
+                          index.toString(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        )
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
           ],
         ),
       ),
