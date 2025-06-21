@@ -13,6 +13,11 @@ class GameScreen extends StatelessWidget {
           color: Colors.redAccent,
           backgroundColor: Colors.transparent,
         ),
+        backgroundColor: Colors.black87,
+        shape: Border.all(
+          color: Colors.redAccent,
+          width: 2.0,
+          style: BorderStyle.solid),
       ),
       body: Container(
 
