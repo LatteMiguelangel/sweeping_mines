@@ -1,4 +1,4 @@
-import 'package:buscando_minas/screens/game_screen.dart';
+import 'package:buscando_minas/frontend/game_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
