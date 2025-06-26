@@ -26,8 +26,11 @@ abstract class Cell extends Equatable {
 }
 
 class CellClosed extends Cell{
-  final bool isFlagged;
-  const CellClosed(this.isFlagged, {required super.content});
+  final bool? isFlagged;
+  const CellClosed({
+    required super.content,
+    this.isFlagged,
+  });
 
   @override
   List<Object?> get props => super.props..add(isFlagged);
