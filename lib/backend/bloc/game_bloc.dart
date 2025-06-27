@@ -7,9 +7,6 @@ part 'game_state.dart';
 class GameBloc extends Bloc<GameEvent, GameState> {
   final GameConfiguration configuration;
   GameBloc(this.configuration) : super(GameInitial(configuration));
-
-  @override
-  // ignore: override_on_non_overriding_member
   Stream<GameState> mapEventToState(GameEvent event) async*{
     // ignore: unused_local_variable
     final currentState = state;
