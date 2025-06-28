@@ -14,7 +14,6 @@ class Assets {
   static const String cellOpened8 = "$_path/cell_opened_8.png";
 
   static const List<String> openedCells = [
-    cellBomb,
     cellOpened,
     cellOpened1,
     cellOpened2,
@@ -24,5 +23,6 @@ class Assets {
     cellOpened6,
     cellOpened7,
     cellOpened8,
+    cellBomb,
   ];
 }

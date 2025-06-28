@@ -8,5 +8,5 @@ abstract class GameEvent extends Equatable {
 }
 
 class InitializeGame extends GameEvent {
-  
+  const InitializeGame();
 }

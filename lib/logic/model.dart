@@ -45,4 +45,7 @@ class GameConfiguration{
   final int height;
   final int numberOfBombs;
   GameConfiguration({required this.width, required this.height, required this.numberOfBombs});
+
+  //Funcion recursiva para generar la configuración del juego
+  //gameDifficult(){}
 }
