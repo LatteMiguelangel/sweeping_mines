@@ -32,7 +32,13 @@ class GameScreen extends StatelessWidget {
                   colors: [Colors.black, Colors.black],
                 ),
               ),
-              child: state is Playing ? _gameContent(state) : _loading(),
+              child: Builder(
+                builder: (_) {
+                  if (state is Playing) return _gameContent(state);
+                  if (state is GameOver) return _gameOverContent(context, state);
+                  return _loading();
+                },
+              ),
             ),
           );
         },
@@ -63,22 +69,18 @@ class GameScreen extends StatelessWidget {
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final gridSize =
-                  constraints.maxWidth; // Limita a ancho de la pantalla
-              final cellSize = (gridSize - 8 * 4) / 8; // Considera los espacios
+              final gridSize = constraints.maxWidth;
               return Center(
                 child: SizedBox(
                   width: gridSize,
                   height: gridSize,
                   child: GridView.builder(
-                    physics:
-                        const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 8,
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 2,
-                        ),
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 8,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 2,
+                    ),
                     padding: const EdgeInsets.all(2),
                     itemCount: state.cells.length,
                     itemBuilder: (context, index) {
@@ -89,6 +91,32 @@ class GameScreen extends StatelessWidget {
               );
             },
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _gameOverContent(BuildContext context, GameOver state) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          '💥 ¡Has perdido!',
+          style: TextStyle(fontSize: 24, color: Colors.red),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            context.read<GameBloc>().add(InitializeGame());
+          },
+          child: const Text('🔁 Jugar de nuevo'),
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // O ir al menú
+          },
+          child: const Text('🏠 Volver al menú'),
         ),
       ],
     );
