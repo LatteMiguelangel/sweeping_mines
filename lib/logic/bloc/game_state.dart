@@ -25,3 +25,17 @@ class Playing extends GameState {
   @override
   List<Object?> get props => super.props..addAll([cells, score]);
 }
+
+class GameOver extends GameState {
+  final List<Cell> cells;
+  final bool won;
+
+  const GameOver({
+    GameConfiguration? configuration,
+    required this.cells,
+    required this.won,
+  }) : super(configuration);
+
+  @override
+  List<Object?> get props => super.props..addAll([cells, won]);
+}

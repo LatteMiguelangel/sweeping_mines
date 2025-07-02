@@ -17,3 +17,7 @@ class TapCell extends GameEvent {
   @override
   List<Object> get props => [index];
 }
+class ToggleFlag extends GameEvent {
+  final int index;
+  const ToggleFlag(this.index);
+}

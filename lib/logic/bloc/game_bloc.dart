@@ -42,10 +42,7 @@ List<Cell> generateBoard(GameConfiguration config) {
       }
     }
 
-    cells[i] = CellClosed(
-      index: i,
-      content: CellContent.values[bombCount],
-    );
+    cells[i] = CellClosed(index: i, content: CellContent.values[bombCount]);
   }
 
   return cells;
@@ -53,85 +50,94 @@ List<Cell> generateBoard(GameConfiguration config) {
 
 class GameBloc extends Bloc<GameEvent, GameState> {
   final GameConfiguration configuration;
+  int flagsPlaced = 0;
 
   GameBloc(this.configuration) : super(GameInitial(configuration)) {
     on<InitializeGame>((event, emit) {
       final cells = generateBoard(configuration);
-      emit(
-        Playing(
-          configuration: configuration,
-          cells: cells,
-          score: 0,
-        ),
-      );
+      flagsPlaced = 0;
+      emit(Playing(configuration: configuration, cells: cells, score: 0));
     });
 
-    on<TapCell>((event, emit) {
-      final state = this.state;
-      if (state is! Playing) return;
+    on<TapCell>(_onTapCell);
+    on<ToggleFlag>(_onToggleFlag);
+  }
 
-      final tappedIndex = event.index;
-      final cells = [...state.cells];
-      final tappedCell = cells[tappedIndex];
+  void _onTapCell(TapCell event, Emitter<GameState> emit) {
+    final state = this.state;
+    if (state is! Playing) return;
 
-      if (tappedCell is! CellClosed) return;
+    final tappedIndex = event.index;
+    final cells = [...state.cells];
+    final tappedCell = cells[tappedIndex];
 
-      if (tappedCell.content == CellContent.bomb) {
-        cells[tappedIndex] = CellOpened(
-          index: tappedIndex,
-          content: tappedCell.content,
-        );
+    if (tappedCell is! CellClosed || tappedCell.flagged) return;
 
-        emit(
-          Playing(
-            configuration: state.gameConfiguration,
-            cells: cells,
-            score: state.score,
-          ),
-        );
-        return;
+    if (tappedCell.content == CellContent.bomb) {
+      // Revelar todas las bombas
+      for (int i = 0; i < cells.length; i++) {
+        if (cells[i] is CellClosed &&
+            (cells[i] as CellClosed).content == CellContent.bomb) {
+          cells[i] = CellOpened(index: i, content: CellContent.bomb);
+        }
       }
 
-      _revealCellsRecursively(
-        cells,
-        tappedIndex,
-        configuration.width,
-        configuration.height,
-      );
+      emit(GameOver(
+        configuration: configuration,
+        cells: cells,
+        won: false,
+      ));
+      return;
+    }
 
-      int points = cells
-          .where((cell) =>
-              cell is CellOpened &&
-              state.cells[cell.index] is CellClosed &&
-              cell.content != CellContent.bomb)
-          .length;
+    _revealCellsRecursively(cells, tappedIndex, configuration.width, configuration.height);
 
-      emit(
-        Playing(
-          configuration: state.gameConfiguration,
-          cells: cells,
-          score: state.score + points,
-        ),
-      );
-    });
+    int revealedCount = cells
+        .where((c) => c is CellOpened && state.cells[c.index] is CellClosed)
+        .length;
+
+    emit(Playing(
+      configuration: configuration,
+      cells: cells,
+      score: state.score + revealedCount,
+    ));
+  }
+
+  void _onToggleFlag(ToggleFlag event, Emitter<GameState> emit) {
+    final state = this.state;
+    if (state is! Playing) return;
+
+    final index = event.index;
+    final cell = state.cells[index];
+
+    if (cell is! CellClosed) return;
+
+    if (!cell.flagged && flagsPlaced >= configuration.numberOfBombs) {
+      return; // Límite de banderas alcanzado
+    }
+
+    final updatedCell = cell.copyWith(flagged: !cell.flagged);
+    final updatedCells = [...state.cells];
+    updatedCells[index] = updatedCell;
+
+    flagsPlaced += updatedCell.flagged ? 1 : -1;
+
+    emit(Playing(
+      configuration: configuration,
+      cells: updatedCells,
+      score: state.score,
+    ));
   }
 
   void _revealCellsRecursively(
-    List<Cell> cells,
-    int index,
-    int width,
-    int height,
-  ) {
+      List<Cell> cells, int index, int width, int height) {
     if (index < 0 || index >= cells.length) return;
     if (cells[index] is CellOpened) return;
 
     final current = cells[index] as CellClosed;
-    if (current.content == CellContent.bomb) return;
+    if (current.flagged || current.content == CellContent.bomb) return;
 
-    cells[index] = CellOpened(
-      index: index,
-      content: current.content,
-    );
+    cells[index] = CellOpened(index: index, content: current.content);
 
     if (current.content == CellContent.zero) {
       int x = index % width;

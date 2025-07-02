@@ -15,6 +15,9 @@ class CellView extends StatelessWidget {
       onTap: () {
         context.read<GameBloc>().add(TapCell(cell.index));
       },
+      onLongPress: () {
+        context.read<GameBloc>().add(ToggleFlag(cell.index));
+      },
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -28,8 +31,15 @@ class CellView extends StatelessWidget {
 
   String _imageForCell(Cell cell) {
     if (cell is CellClosed) {
-      return Assets.cellClosed;
+      if (cell.flagged) {
+        return Assets.cellFlagged;
+      } else {
+        return Assets.cellClosed;
+      }
     } else {
+      if (cell.content == CellContent.bomb) {
+        return Assets.cellBomb;
+      }
       return Assets.openedCells[cell.content.index];
     }
   }
