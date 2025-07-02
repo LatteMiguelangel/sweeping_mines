@@ -16,8 +16,7 @@ class GameScreen extends StatelessWidget {
     );
 
     return BlocProvider(
-      create: (context) =>
-          GameBloc(configuration)..add(InitializeGame()),
+      create: (context) => GameBloc(configuration)..add(InitializeGame()),
       child: BlocBuilder<GameBloc, GameState>(
         builder: (context, state) {
           return Scaffold(
@@ -33,9 +32,7 @@ class GameScreen extends StatelessWidget {
                   colors: [Colors.black, Colors.black],
                 ),
               ),
-              child: state is Playing
-                  ? _gameContent(state)
-                  : _loading(),
+              child: state is Playing ? _gameContent(state) : _loading(),
             ),
           );
         },
@@ -55,43 +52,40 @@ class GameScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Text(
-                    'Jugador 1: ${state.scores[0]}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  const Spacer(),
-                  Text(
-                    'Jugador 2: ${state.scores[1]}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
               Text(
-                'Turno: Jugador ${state.currentPlayer + 1}',
+                'Puntaje: ${state.score}',
                 style: const TextStyle(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
-
-        // Para que el GridView ocupe todo el espacio restante
         Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(8),
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-            ),
-            itemCount: state.cells.length,
-            itemBuilder: (context, index) {
-              return CellView(
-                cell: state.cells[index],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final gridSize =
+                  constraints.maxWidth; // Limita a ancho de la pantalla
+              final cellSize = (gridSize - 8 * 4) / 8; // Considera los espacios
+              return Center(
+                child: SizedBox(
+                  width: gridSize,
+                  height: gridSize,
+                  child: GridView.builder(
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 8,
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 2,
+                        ),
+                    padding: const EdgeInsets.all(2),
+                    itemCount: state.cells.length,
+                    itemBuilder: (context, index) {
+                      return CellView(cell: state.cells[index]);
+                    },
+                  ),
+                ),
               );
             },
           ),

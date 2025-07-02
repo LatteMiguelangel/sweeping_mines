@@ -14,16 +14,14 @@ class GameInitial extends GameState {
 
 class Playing extends GameState {
   final List<Cell> cells;
-  final int currentPlayer;
-  final List<int> scores;
+  final int score;
 
   const Playing({
     GameConfiguration? configuration,
     required this.cells,
-    required this.currentPlayer,
-    required this.scores,
+    required this.score,
   }) : super(configuration);
 
   @override
-  List<Object?> get props => super.props..addAll([cells, currentPlayer, scores]);
+  List<Object?> get props => super.props..addAll([cells, score]);
 }

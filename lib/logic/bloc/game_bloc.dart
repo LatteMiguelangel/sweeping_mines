@@ -41,11 +41,13 @@ List<Cell> generateBoard(GameConfiguration config) {
         }
       }
     }
+
     cells[i] = CellClosed(
       index: i,
       content: CellContent.values[bombCount],
     );
   }
+
   return cells;
 }
 
@@ -59,8 +61,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         Playing(
           configuration: configuration,
           cells: cells,
-          currentPlayer: 0,
-          scores: [0, 0],
+          score: 0,
         ),
       );
     });
@@ -75,24 +76,22 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
       if (tappedCell is! CellClosed) return;
 
-      // Si bomba, solo abre esa celda y sigue
       if (tappedCell.content == CellContent.bomb) {
         cells[tappedIndex] = CellOpened(
           index: tappedIndex,
           content: tappedCell.content,
         );
+
         emit(
           Playing(
             configuration: state.gameConfiguration,
             cells: cells,
-            currentPlayer: state.currentPlayer,
-            scores: state.scores,
+            score: state.score,
           ),
         );
         return;
       }
 
-      // Revela celdas
       _revealCellsRecursively(
         cells,
         tappedIndex,
@@ -100,7 +99,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         configuration.height,
       );
 
-      // Cuenta nuevos puntos
       int points = cells
           .where((cell) =>
               cell is CellOpened &&
@@ -108,18 +106,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
               cell.content != CellContent.bomb)
           .length;
 
-      final updatedScores = [...state.scores];
-      updatedScores[state.currentPlayer] += points;
-
-      // Siguiente turno
-      int nextPlayer = (state.currentPlayer + 1) % updatedScores.length;
-
       emit(
         Playing(
           configuration: state.gameConfiguration,
           cells: cells,
-          currentPlayer: nextPlayer,
-          scores: updatedScores,
+          score: state.score + points,
         ),
       );
     });
