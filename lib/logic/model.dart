@@ -15,19 +15,22 @@ enum CellContent {
 
 abstract class Cell extends Equatable {
   final CellContent content;
+  final int index;
 
   const Cell({
     required this.content,
+    required this.index
   });
 
   @override
-  List<Object?> get props => [content];
+  List<Object?> get props => [index,content];
 
 }
 
 class CellClosed extends Cell{
   final bool? isFlagged;
   const CellClosed({
+    required super.index,
     required super.content,
     this.isFlagged,
   });
@@ -37,7 +40,10 @@ class CellClosed extends Cell{
 }
 
 class CellOpened extends Cell{
-  const CellOpened({required super.content});
+  const CellOpened({
+    required super.content,
+    required super.index
+    });
 }
 
 class GameConfiguration{

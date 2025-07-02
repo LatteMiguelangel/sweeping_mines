@@ -12,12 +12,18 @@ class GameInitial extends GameState {
   const GameInitial(super.gameConfiguration);
 }
 
-class Playing extends GameState{
+class Playing extends GameState {
   final List<Cell> cells;
+  final int currentPlayer;
+  final List<int> scores;
+
   const Playing({
     GameConfiguration? configuration,
     required this.cells,
-  }) :super(configuration);
+    required this.currentPlayer,
+    required this.scores,
+  }) : super(configuration);
+
   @override
-  List<Object?> get props => super.props..add(cells);
+  List<Object?> get props => super.props..addAll([cells, currentPlayer, scores]);
 }

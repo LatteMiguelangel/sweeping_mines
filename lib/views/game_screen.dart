@@ -6,71 +6,97 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final configuration = GameConfiguration(width: 8, height: 8, numberOfBombs: 8);
+    final configuration = GameConfiguration(
+      width: 8,
+      height: 8,
+      numberOfBombs: 8,
+    );
+
     return BlocProvider(
-      create: (context) => GameBloc(configuration)..add(InitializeGame()),
+      create: (context) =>
+          GameBloc(configuration)..add(InitializeGame()),
       child: BlocBuilder<GameBloc, GameState>(
-  builder: (context, state) {
-    return Scaffold(
-        appBar: AppBar(
-            backgroundColor: Colors.black54,
-            title: Center(
-              child: Text("MINESWEEPER"),
-            )
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.black54,
+              title: const Center(child: Text('MINESWEEPER')),
+            ),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black,
-                    Colors.black,
-                  ]
-              )
-          ),
-          child: state is Playing ? _gameContent(context, state) : _loading(),
-        ),
-      );
-  },
-),
+                  colors: [Colors.black, Colors.black],
+                ),
+              ),
+              child: state is Playing
+                  ? _gameContent(state)
+                  : _loading(),
+            ),
+          );
+        },
+      ),
     );
   }
-
 
   Widget _loading() {
-    return Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _gameContent(BuildContext context, Playing state) {
+  Widget _gameContent(Playing state) {
     return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
                 children: [
-                  Text("00"),
-                  Spacer(),
-                  Text("10")
+                  Text(
+                    'Jugador 1: ${state.scores[0]}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Jugador 2: ${state.scores[1]}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ],
               ),
+              const SizedBox(height: 8),
+              Text(
+                'Turno: Jugador ${state.currentPlayer + 1}',
+                style: const TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+
+        // Para que el GridView ocupe todo el espacio restante
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.all(8),
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 4,
+              mainAxisSpacing: 4,
             ),
-            GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: state.gameConfiguration!.width),
-                itemCount: state.cells.length,
-                itemBuilder: (context, index) {
-                  return CellView(cell: state.cells[index]);
-                }
-            )
-          ],
-        );
+            itemCount: state.cells.length,
+            itemBuilder: (context, index) {
+              return CellView(
+                cell: state.cells[index],
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

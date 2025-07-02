@@ -1,6 +1,8 @@
+import 'package:buscando_minas/logic/bloc/game_bloc.dart';
 import 'package:buscando_minas/logic/model.dart';
 import 'package:flutter/material.dart';
 import 'package:buscando_minas/assets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 class CellView extends StatelessWidget {
   final Cell cell;
 
@@ -14,7 +16,7 @@ class CellView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       // ignore: avoid_print
-      onTap: (){},
+      onTap: (){context.read<GameBloc>().add(TapCell(cell.index));},
       child: Image.asset(_imageForCell(cell)),
     );
   }
