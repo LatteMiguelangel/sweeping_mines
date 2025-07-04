@@ -15,6 +15,11 @@ abstract class Cell extends Equatable {
   List<Object?> get props => [index, content];
 }
 
+extension CellExtension on Cell {
+  bool get hasBomb =>
+      this is CellClosed && (this as CellClosed).content == CellContent.bomb;
+}
+
 class CellClosed extends Cell {
   final bool flagged;
 

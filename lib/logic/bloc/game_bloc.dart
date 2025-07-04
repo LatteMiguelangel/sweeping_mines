@@ -82,25 +82,29 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         }
       }
 
-      emit(GameOver(
-        configuration: configuration,
-        cells: cells,
-        won: false,
-      ));
+      emit(GameOver(configuration: configuration, cells: cells, won: false));
       return;
     }
 
-    _revealCellsRecursively(cells, tappedIndex, configuration.width, configuration.height);
+    _revealCellsRecursively(
+      cells,
+      tappedIndex,
+      configuration.width,
+      configuration.height,
+    );
 
-    int revealedCount = cells
-        .where((c) => c is CellOpened && state.cells[c.index] is CellClosed)
-        .length;
+    int revealedCount =
+        cells
+            .where((c) => c is CellOpened && state.cells[c.index] is CellClosed)
+            .length;
 
-    emit(Playing(
-      configuration: configuration,
-      cells: cells,
-      score: state.score + revealedCount,
-    ));
+    emit(
+      Playing(
+        configuration: configuration,
+        cells: cells,
+        score: state.score + revealedCount,
+      ),
+    );
   }
 
   void _onToggleFlag(ToggleFlag event, Emitter<GameState> emit) {
@@ -121,16 +125,25 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     updatedCells[index] = updatedCell;
 
     flagsPlaced += updatedCell.flagged ? 1 : -1;
-
-    emit(Playing(
-      configuration: configuration,
-      cells: updatedCells,
-      score: state.score,
-    ));
+    if (_checkWinCondition(updatedCells)) {
+      emit(Victory(state.gameConfiguration, score: state.score));
+    } else {
+      emit(
+        Playing(
+          configuration: configuration,
+          cells: updatedCells,
+          score: state.score,
+        ),
+      );
+    }
   }
 
   void _revealCellsRecursively(
-      List<Cell> cells, int index, int width, int height) {
+    List<Cell> cells,
+    int index,
+    int width,
+    int height,
+  ) {
     if (index < 0 || index >= cells.length) return;
     if (cells[index] is CellOpened) return;
 
@@ -155,5 +168,19 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         }
       }
     }
+  }
+
+  bool _checkWinCondition(List<Cell> cells) {
+    // Obtiene solo las celdas con banderas
+    final flagged = cells
+    .where((cell) => cell is CellClosed && cell.flagged)
+    .toList();
+    // Si el número de banderas no coincide con el número de bombas, no puede ganar
+    if (flagged.length != configuration.numberOfBombs) return false;
+    // Verifica que todas las celdas con bandera sean bombas
+    for (var cell in flagged) {
+      if (!cell.hasBomb) return false;
+    }
+    return true;
   }
 }

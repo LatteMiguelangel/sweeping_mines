@@ -18,30 +18,35 @@ class GameScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => GameBloc(configuration)..add(InitializeGame()),
       child: BlocBuilder<GameBloc, GameState>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.black54,
-              title: const Center(child: Text('MINESWEEPER')),
-            ),
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black, Colors.black],
+        builder:
+            (context, state) => Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.black54,
+                title: const Center(child: Text('MINESWEEPER')),
+              ),
+              body: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.black, Colors.black],
+                  ),
+                ),
+                child: Builder(
+                  builder: (_) {
+                    if (state is Playing) {
+                      return _gameContent(state);
+                    } else if (state is GameOver) {
+                      return _gameOverContent(context, state);
+                    } else if (state is Victory) {
+                      return _victoryContent(context, state);
+                    } else {
+                      return _loading();
+                    }
+                  },
                 ),
               ),
-              child: Builder(
-                builder: (_) {
-                  if (state is Playing) return _gameContent(state);
-                  if (state is GameOver) return _gameOverContent(context, state);
-                  return _loading();
-                },
-              ),
             ),
-          );
-        },
       ),
     );
   }
@@ -76,11 +81,12 @@ class GameScreen extends StatelessWidget {
                   height: gridSize,
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 8,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 2,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 8,
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 2,
+                        ),
                     padding: const EdgeInsets.all(2),
                     itemCount: state.cells.length,
                     itemBuilder: (context, index) {
@@ -121,4 +127,30 @@ class GameScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _victoryContent(BuildContext context, Victory state) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      const Text(
+        '🎉 ¡Has ganado!',
+        style: TextStyle(fontSize: 24, color: Colors.greenAccent),
+      ),
+      const SizedBox(height: 20),
+      ElevatedButton(
+        onPressed: () {
+          context.read<GameBloc>().add(InitializeGame());
+        },
+        child: const Text('🔁 Jugar de nuevo'),
+      ),
+      const SizedBox(height: 10),
+      ElevatedButton(
+        onPressed: () {
+          Navigator.of(context).pop(); // O al menú
+        },
+        child: const Text('🏠 Volver al menú'),
+      ),
+    ],
+  );
 }
