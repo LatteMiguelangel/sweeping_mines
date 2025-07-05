@@ -59,3 +59,13 @@ class GameConfiguration {
     required this.numberOfBombs,
   });
 }
+
+GameConfiguration generateCustomConfiguration(int numberOfBombs) {
+  if (numberOfBombs <= 10){
+    return GameConfiguration(width: 8, height: 8, numberOfBombs: numberOfBombs);
+  } else if (numberOfBombs <= 30){
+    return GameConfiguration(width: 16, height: 16, numberOfBombs: numberOfBombs);
+  } else {
+    return GameConfiguration(width: 30, height: 16, numberOfBombs: numberOfBombs);
+  }
+}

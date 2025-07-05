@@ -175,9 +175,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final flagged = cells
     .where((cell) => cell is CellClosed && cell.flagged)
     .toList();
-    // Si el número de banderas no coincide con el número de bombas, no puede ganar
     if (flagged.length != configuration.numberOfBombs) return false;
-    // Verifica que todas las celdas con bandera sean bombas
     for (var cell in flagged) {
       if (!cell.hasBomb) return false;
     }

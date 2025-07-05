@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,
-      home: GameScreen(),
+      home: GameScreen(numberOfBombs: 5),
     );
   }
 }

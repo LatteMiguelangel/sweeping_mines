@@ -5,16 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+  final int numberOfBombs;
+  const GameScreen({super.key, required this.numberOfBombs});
 
   @override
   Widget build(BuildContext context) {
-    final configuration = GameConfiguration(
-      width: 8,
-      height: 8,
-      numberOfBombs: 8,
-    );
-
+    final configuration = generateCustomConfiguration(numberOfBombs);
+    final width = configuration.width;
+    final height = configuration.height;
     return BlocProvider(
       create: (context) => GameBloc(configuration)..add(InitializeGame()),
       child: BlocBuilder<GameBloc, GameState>(
@@ -35,7 +33,7 @@ class GameScreen extends StatelessWidget {
                 child: Builder(
                   builder: (_) {
                     if (state is Playing) {
-                      return _gameContent(state);
+                      return _gameContent(state, width, height);
                     } else if (state is GameOver) {
                       return _gameOverContent(context, state);
                     } else if (state is Victory) {
@@ -55,7 +53,7 @@ class GameScreen extends StatelessWidget {
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _gameContent(Playing state) {
+  Widget _gameContent(Playing state, int width, int height) {
     return Column(
       children: [
         Padding(
@@ -82,10 +80,11 @@ class GameScreen extends StatelessWidget {
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 8,
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 2,
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: width,
+                          crossAxisSpacing: 1,
+                          mainAxisSpacing: 1,
+                          childAspectRatio: width / height,
                         ),
                     padding: const EdgeInsets.all(2),
                     itemCount: state.cells.length,
@@ -127,30 +126,30 @@ class GameScreen extends StatelessWidget {
       ],
     );
   }
-}
 
-Widget _victoryContent(BuildContext context, Victory state) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      const Text(
-        '🎉 ¡Has ganado!',
-        style: TextStyle(fontSize: 24, color: Colors.greenAccent),
-      ),
-      const SizedBox(height: 20),
-      ElevatedButton(
-        onPressed: () {
-          context.read<GameBloc>().add(InitializeGame());
-        },
-        child: const Text('🔁 Jugar de nuevo'),
-      ),
-      const SizedBox(height: 10),
-      ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pop(); // O al menú
-        },
-        child: const Text('🏠 Volver al menú'),
-      ),
-    ],
-  );
+  Widget _victoryContent(BuildContext context, Victory state) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          '🎉 ¡Has ganado!',
+          style: TextStyle(fontSize: 24, color: Colors.greenAccent),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            context.read<GameBloc>().add(InitializeGame());
+          },
+          child: const Text('🔁 Jugar de nuevo'),
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('🏠 Volver al menú'),
+        ),
+      ],
+    );
+  }
 }
